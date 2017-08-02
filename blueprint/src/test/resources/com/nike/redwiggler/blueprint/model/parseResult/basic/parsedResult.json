@@ -1,0 +1,1 @@
+{"element":"parseResult","content":[{"element":"category","meta":{"classes":["api"],"title":"My API"},"content":[{"element":"category","meta":{"classes":["resourceGroup"],"title":""},"content":[{"element":"resource","meta":{"title":"Foo"},"attributes":{"href":"/foo"},"content":[]}]}]}]}

@@ -1,0 +1,9 @@
+#!/bin/sh
+dir=$(dirname $0)/src/test/resources/com/nike/redwiggler/blueprint/model/parseResult
+for x in $(ls $dir); do
+  if [ ! -f $x ]; then
+    testDir="$dir/$x"
+    echo "checking $testDir"
+    curl -H "Content-Type: text/vnd.apiblueprint" https://api.apiblueprint.org/parser --data-binary @$testDir/API.md > $testDir/parsedResult.json
+  fi
+done
