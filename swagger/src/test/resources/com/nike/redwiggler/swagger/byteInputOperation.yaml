@@ -1,0 +1,28 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: ByteInputOperation
+  description: ByteInputOperation
+#
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json
+paths:
+  /mypath:
+    post:
+      parameters:
+         - name: BinaryData
+           in: body
+           required: true
+           description: body
+           schema:
+             type: string
+             format: byte
+      responses:
+        204:
+          description: Success
+definitions:
+

@@ -1,0 +1,120 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: Example1
+  description: Example1
+basePath: /my/resource/v2
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: A JSON Web Token (http://www.jwt.io).
+security:
+  - JWT: []
+paths:
+  /:
+    post:
+      description: Creates item
+      parameters:
+         - name: body
+           in: body
+           required: true
+           description: body
+           schema:
+             $ref: "#/definitions/CreateItemRequest"
+      responses:
+        201:
+          description: Success
+          schema:
+            $ref: "#/definitions/Item"
+        401:
+          description: Unauthoried
+    get:
+      description: Searches
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/SearchResponse"
+  /{id}:
+    get:
+      description: Gets an item
+      parameters:
+         - name: id
+           in: path
+           description: The item id
+           required: true
+           x-example: 3cf6b0e6-fae7-4524-9d93-d2a3a506066d
+           type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Item"
+        401:
+          description: NotAuthorized
+definitions:
+  SearchResponse:
+    properties:
+      pages:
+          type: string
+  CreateItemRequest:
+    properties:
+      foo:
+        type: string
+        example: 73728293
+        x-required: true
+        readOnly: true
+        description: foobar
+      documentType:
+        type: string
+        description: The type of the document
+        example: "TYPE1"
+        x-required: true
+        readOnly: true
+        enum: ["TYPE1", "TYPE2"]
+    required:
+      - documentType
+  Item:
+    properties:
+      id:
+        type: string
+        example: 5681274f-2a6b-400c-886e-0d3d01567337
+        readOnly: true
+        pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+        description: globally Unique id
+      documentCreationDate:
+        type: string
+        example: 2016-08-08T22:19:04+00:00
+        description: ISO 8601 Date
+        readOnly: true
+      documentType:
+        type: string
+        description: The type of the document
+        enum: ["TYPE1", "TYPE2"]
+        readOnly: true
+      required:
+        type: boolean
+        example: true
+  InvalidCreateResponse:
+    properties:
+      message:
+        type: string
+        example: Validation Failed
+      errors:
+        type: array
+        items:
+          $ref: "#/definitions/CreateErrorField"
+  CreateErrorField:
+    properties:
+      field:
+        type: string
+        example: myfield
+

@@ -1,0 +1,15 @@
+@import com.nike.redwiggler.core.models.SchemaValidationFailed
+
+@(failed : SchemaValidationFailed)
+Failed Schema Validation: @{failed.validationException.get.getMessage}
+<ul>
+@for(cause <- failed.validationException.get.getCausingExceptions) {
+    <li>@{cause.getErrorMessage}</li>
+    <li>Errors:</li>
+    <ul>
+        @for(error <- cause.getAllMessages) {
+            <li>@error</li>
+        }
+    </ul>
+}
+</ul>

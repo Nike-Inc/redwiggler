@@ -1,0 +1,23 @@
+@import com.nike.redwiggler.core.models.ValidationResult
+@import com.nike.redwiggler.core.models.SchemaValidationFailed
+
+@(resultIndex: Int, codeAndResult: Map[Int, Seq[ValidationResult]])
+
+<div id="collapse@resultIndex" class="panel-collapse collapse">
+    <ul>
+    @for((code, result) <- codeAndResult) {
+        <li>@code</li>
+        <ul>
+        @for(r <- result) {
+            <li>
+            @if(r.result.isInstanceOf[SchemaValidationFailed]) {
+                @renderSchemaValidationFailed(r.result.asInstanceOf[SchemaValidationFailed])
+            } else {
+               @{r.result}
+            }
+            </li>
+        }
+        </ul>
+    }
+    </ul>
+</div>

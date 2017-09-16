@@ -1,0 +1,9 @@
+@import com.nike.redwiggler.core.models.RedwigglerReport
+@import com.nike.redwiggler.core.models.ValidationStatus
+
+@(reports : Seq[RedwigglerReport])
+
+@for((report, index) <- reports.zipWithIndex) {
+    @testResultLine(index, report.title, report.badge)
+    @testDetailLine(index, report.results)
+}

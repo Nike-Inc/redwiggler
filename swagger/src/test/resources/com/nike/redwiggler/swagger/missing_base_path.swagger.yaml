@@ -1,0 +1,18 @@
+swagger: "2.0"
+info:
+  title: "Title"
+  version: ""
+paths:
+  /:
+    post:
+      parameters:
+        - name: body
+          in: body
+          schema:
+              type: object
+              properties:
+                object:
+                  type: string
+      responses:
+        204:
+          description: Accepted

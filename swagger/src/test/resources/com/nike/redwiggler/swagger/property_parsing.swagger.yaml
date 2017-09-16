@@ -1,0 +1,36 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: MyService
+basePath: /my/resource/v1
+#
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json;charset=utf-8
+paths:
+  /:
+    get:
+      summary: summary
+      description: description
+      responses:
+        201:
+          description: Success
+          schema:
+            $ref: "#/definitions/GetResponse"
+definitions:
+  GetResponse:
+    properties:
+      foo:
+        type: integer
+        example: 5
+      bar:
+        type: number
+        example: 2.3
+      baz:
+        type: object
+        properties:
+          foo:
+            type: string
