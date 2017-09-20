@@ -1,7 +1,7 @@
-@import com.nike.redwiggler.core.models.ValidationResult
 @import com.nike.redwiggler.core.models.SchemaValidationFailed
+@import com.nike.redwiggler.core.models.ValidationStatus
 
-@(resultIndex: Int, codeAndResult: Map[Int, Seq[ValidationResult]])
+@(resultIndex: Int, codeAndResult: Map[Int, Seq[ValidationStatus]])
 
 <div id="collapse@resultIndex" class="panel-collapse collapse">
     <ul>
@@ -10,10 +10,10 @@
         <ul>
         @for(r <- result) {
             <li>
-            @if(r.result.isInstanceOf[SchemaValidationFailed]) {
-                @renderSchemaValidationFailed(r.result.asInstanceOf[SchemaValidationFailed])
+            @if(r.isInstanceOf[SchemaValidationFailed]) {
+                @renderSchemaValidationFailed(r.asInstanceOf[SchemaValidationFailed])
             } else {
-               @{r.result}
+               @{r}
             }
             </li>
         }

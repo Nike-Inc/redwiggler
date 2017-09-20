@@ -1,10 +1,10 @@
 package com.nike.redwiggler.core.models
 
-case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[ValidationResult]]) {
+case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[ValidationStatus]]) {
 
   def title: String = verbPath.verb + " " + verbPath.path
 
-  def passed : Int = results.values.flatten.map(_.result).collect {
+  def passed : Int = results.values.flatten.collect {
     case ValidationPassed(_, _) => 1
   }.sum
 
@@ -14,7 +14,12 @@ case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[Validatio
 }
 
 object RedwigglerReport {
-  def apply(verbPath: VerbPath, results : Seq[ValidationResult]) : RedwigglerReport = {
+  def apply(validationResults: Seq[ValidationStatus]) : Seq[RedwigglerReport] = validationResults
+    .groupBy(_.verbPath)
+    .map(x => apply(verbPath = x._1, results = x._2))
+    .toSeq
+
+  def apply(verbPath: VerbPath, results : Seq[ValidationStatus]) : RedwigglerReport = {
     RedwigglerReport(verbPath, results.groupBy(_.code))
   }
 }
