@@ -9,7 +9,7 @@ sealed abstract class ValidationStatus(val verbPath: VerbPath, val code : Int) {
 
 case class CallMatchedMultipleSpecifications(call : EndpointCall, specifications : Seq[EndpointSpecification]) extends ValidationStatus(call)
 case class CallNotMatchedBySpecification(call : EndpointCall) extends ValidationStatus(call)
-case class SchemaValidationFailed(call : EndpointCall, specification: EndpointSpecification, validationException : Option[ValidationException]) extends ValidationStatus(call)
+case class SchemaValidationFailed(call : EndpointCall, specification: EndpointSpecification, validationException : Option[ValidationException]) extends ValidationStatus(specification)
 case class UntestedSpecification(specification : EndpointSpecification) extends ValidationStatus(specification)
-case class ValidationPassed(call : EndpointCall, specification: EndpointSpecification) extends ValidationStatus(call)
-case class ValidationFailed(call : EndpointCall, specification: EndpointSpecification) extends ValidationStatus(call)
+case class ValidationPassed(call : EndpointCall, specification: EndpointSpecification) extends ValidationStatus(specification)
+case class ValidationFailed(call : EndpointCall, specification: EndpointSpecification) extends ValidationStatus(specification)

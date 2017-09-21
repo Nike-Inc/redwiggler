@@ -4,27 +4,17 @@ import java.io.InputStream
 
 import com.nike.redwiggler.core.models.HttpVerb._
 import com.nike.redwiggler.core.models.{EndpointSpecification, JsonSchema, Path}
-import io.swagger.parser.SwaggerParser
 import org.everit.json.schema._
 import org.scalatest.{FunSpec, Matchers}
 
 import scala.collection.JavaConverters._
-import scala.io.Source
 
 class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
 
   private def loadEndpoints(is: InputStream) = {
-    val swaggerParser = new SwaggerParser()
-    val swagger = swaggerParser.parse(Source.fromInputStream(is).mkString)
-    SwaggerEndpointSpecificationProvider(swagger)
+    SwaggerEndpointSpecificationProvider(is)
       .getEndPointSpecs
       .asScala
-  }
-
-  private def loadProvider(is: InputStream) = {
-    val swaggerParser = new SwaggerParser()
-    val swagger = swaggerParser.parse(Source.fromInputStream(is).mkString)
-    SwaggerEndpointSpecificationProvider(swagger)
   }
 
   it("should get single definition") {
@@ -166,7 +156,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
   }
 
   it("propertyParsing") {
-    val provider = loadProvider(getClass.getResourceAsStream("property_parsing.swagger.yaml"))
+    val provider = SwaggerEndpointSpecificationProvider(getClass.getResourceAsStream("property_parsing.swagger.yaml"))
 
     val expected = ObjectSchema.builder()
       .addPropertySchema("foo", NumberSchema.builder()

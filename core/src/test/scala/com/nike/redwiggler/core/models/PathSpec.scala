@@ -58,6 +58,15 @@ class PathSpec extends FunSpec with Matchers {
     }
   }
 
+  describe("asString") {
+    it("should generate a string for an empty path") {
+      Path().asString should equal("/")
+    }
+    it("should generate a string for a multi part path") {
+      Path("/hello/world/v2").asString should equal("/hello/world/v2")
+    }
+  }
+
   it("should concatenate") {
     val path1 = Path("/hello/world")
     val path2 = Path("/over/there")

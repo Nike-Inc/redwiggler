@@ -36,4 +36,12 @@ lazy val html = (project in file("html"))
   .enablePlugins(SbtTwirl)
 
 lazy val root = (project in file("."))
-  .aggregate(core, swagger, restassured, html)
+  .aggregate(core, swagger, restassured, html, `integration-tests`)
+
+lazy val `integration-tests` = (project in file("integration-tests"))
+  .dependsOn(core, swagger, html)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    )
+  )

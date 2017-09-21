@@ -154,3 +154,21 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
     case _ => FormatValidator.forFormat(model.getFormat)
   }
 }
+
+object SwaggerEndpointSpecificationProvider {
+  import io.swagger.parser.SwaggerParser
+  import java.io._
+  import scala.io._
+
+  def apply(file : File) : SwaggerEndpointSpecificationProvider = {
+    val swaggerParser = new SwaggerParser()
+    val swagger = swaggerParser.parse(Source.fromFile(file).mkString)
+    SwaggerEndpointSpecificationProvider(swagger)
+  }
+
+  def apply(is: InputStream) : SwaggerEndpointSpecificationProvider = {
+    val swaggerParser = new SwaggerParser()
+    val swagger = swaggerParser.parse(Source.fromInputStream(is).mkString)
+    SwaggerEndpointSpecificationProvider(swagger)
+  }
+}

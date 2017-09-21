@@ -17,7 +17,7 @@ case class Path(components : Seq[PathComponent]) {
 
   def /(path : Path) : Path = Path(components ++ path.components)
 
-  def asString : String = components.map(_.asString).mkString("/")
+  def asString : String = components.map(_.asString).mkString("/", "/", "")
 }
 
 object Path {

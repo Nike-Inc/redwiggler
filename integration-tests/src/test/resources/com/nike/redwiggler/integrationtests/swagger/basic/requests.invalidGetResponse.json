@@ -1,0 +1,7 @@
+{
+  "verb": "GET",
+  "path": "/my/resource/v2/25",
+  "responseHeaders": [],
+  "responseBody": "{\"id\": \"25\", \"name\": \"foo\"}",
+  "code": 200
+}

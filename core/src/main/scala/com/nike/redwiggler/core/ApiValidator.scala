@@ -16,8 +16,8 @@ object ApiValidator {
       map(UntestedSpecification.apply)
 
     val matchedCallsAndSpecifications = matchedSpecifications.
-      filter(_._2.size == 1).
-      map { case (spec, matchedCalls) => MatchedCall(matchedCalls.head, spec) }
+      filter(_._2.nonEmpty).
+      flatMap { case (spec, matchedCalls) => matchedCalls.map(call => MatchedCall(call, spec)) }
 
     val matchedStatuses = matchedCallsAndSpecifications.
       map(_.matchedStatus)

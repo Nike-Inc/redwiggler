@@ -6,12 +6,18 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonList;
+
 
 public class FileBasedEndpointCallProvider implements EndpointCallProvider {
     private final List<File> files;
 
     public FileBasedEndpointCallProvider(List<File> files) {
         this.files = files;
+    }
+
+    public FileBasedEndpointCallProvider(File file) {
+        this(singletonList(file));
     }
 
     @Override
