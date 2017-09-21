@@ -1,6 +1,8 @@
 # Red wiggler
 The composting worm.  Composts your contract specification and tests and confirms that the contract specification is being followed.
 
+[![Build Status](https://travis-ci.com/Nike-Inc/redwiggler.svg?token=PmECSWCH8LFEKNdzr64F&branch=master)](https://travis-ci.com/Nike-Inc/redwiggler)
+
 ## Current features:
 + Supports swagger 2.0
 + Compares every call to every schema and sees if there's a match to path, code and request schema
