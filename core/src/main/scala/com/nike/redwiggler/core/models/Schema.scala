@@ -5,17 +5,21 @@ import collection.JavaConverters._
 import org.json.JSONObject
 
 trait Schema {
-  def isValid(payload : String) : Boolean
+  def validate(payload : String) : Option[ValidationFailure]
 }
 
 case class JsonSchema(schema : JsSchema) extends Schema {
-  override def isValid(payload: String): Boolean = try {
+  override def validate(payload: String): Option[ValidationFailure] = try {
     schema.validate(new JSONObject(payload))
-    true
+    None
   } catch {
-    case ve : ValidationException =>
-      ve.printStackTrace()
-      ve.getCausingExceptions.asScala.foreach(_.printStackTrace())
-      false
+    case ve : ValidationException => Some(validationException2ValidationFailure(ve))
   }
+
+  def validationException2ValidationFailure(cause : ValidationException) : ValidationFailure = ValidationFailure(
+    message = cause.getErrorMessage,
+    pointer = cause.getPointerToViolation,
+    path = cause.getCausingExceptions.asScala.map(validationException2ValidationFailure)
+  )
 }
+

@@ -51,8 +51,11 @@ class ApiValidatorSpec extends FunSpec with Matchers {
     }
     it("should validate multiple matching call/specification") {
       case object TestSchema extends Schema {
-
-        override def isValid(payload: String): Boolean = payload == "foo"
+        override def validate(payload: String): Option[ValidationFailure] = if (payload == "foo") {
+          None
+        } else {
+          Some(ValidationFailure(pointer = "foo", message = "bar", path = Seq()))
+        }
       }
       val specification = specificationA.copy(responseSchema = Some(TestSchema))
       val call1 = callA.copy(responseBody = Some("foo"))
@@ -61,9 +64,9 @@ class ApiValidatorSpec extends FunSpec with Matchers {
         specifications = Seq(specification),
         calls = Seq(call1, call2)
       )
-      statuses should contain only (
+      statuses should contain only(
         ValidationPassed(call = call1, specification = specification),
-        SchemaValidationFailed(call = call2, specification = specification, validationException = None)
+        SchemaValidationFailed(call = call2, specification = specification, validationFailure = ValidationFailure(pointer = "foo", message = "bar", path = Seq()))
       )
     }
     it("should fail validation with single matching call/specification but invalid schema") {
@@ -73,7 +76,7 @@ class ApiValidatorSpec extends FunSpec with Matchers {
         specifications = Seq(specification),
         calls = Seq(call)
       )
-      statuses should contain only SchemaValidationFailed(call = call, specification = specification, None)
+      statuses should contain only SchemaValidationFailed(call = call, specification = specification, ValidationFailure(pointer = "pointer", message = "foobar", path = Seq()))
     }
   }
 

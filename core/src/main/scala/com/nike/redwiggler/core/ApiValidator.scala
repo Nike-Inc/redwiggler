@@ -26,11 +26,15 @@ object ApiValidator {
   }
 
   case class MatchedCall(call: EndpointCall, specification: EndpointSpecification) {
+
     def matchedStatus = (call.responseBody, specification.responseSchema) match {
-      case (Some(responseBody), Some(responseSchema)) if responseSchema.isValid(responseBody) =>
-        ValidationPassed(call, specification)
       case (Some(responseBody), Some(responseSchema)) =>
-        SchemaValidationFailed(call, specification, None)
+        responseSchema.validate(responseBody) match {
+          case Some(validations) =>
+            SchemaValidationFailed(call, specification, validations)
+          case None =>
+            ValidationPassed(call, specification)
+        }
       case _ =>
         ValidationFailed(call, specification)
     }
