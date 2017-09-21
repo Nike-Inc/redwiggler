@@ -3,7 +3,7 @@ package com.nike.redwiggler.swagger
 import java.util
 
 import com.nike.redwiggler.core.EndpointSpecificationProvider
-import com.nike.redwiggler.core.models.{EndpointSpecification, HttpVerb, JsonSchema}
+import com.nike.redwiggler.core.models.{EndpointSpecification, HttpVerb, JsonSchema, Path => RedwigglerPath}
 import io.swagger.models._
 import io.swagger.models.parameters.BodyParameter
 import io.swagger.models.properties._
@@ -24,7 +24,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
     } yield {
       EndpointSpecification(
         code = Integer.parseInt(statusCode),
-        path = basePath.getOrElse("") + pathUri,
+        path = basePath / SwaggerPath(pathUri),
         responseSchema = Option(response.getSchema).map(resolveSchema).map(JsonSchema.apply),
         requestSchema = findRequestSchema(path, operation).map(JsonSchema.apply),
         verb = HttpVerb.from(method.name())
@@ -32,7 +32,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
     }
   }.asJava
 
-  private lazy val basePath = if (StringUtils.isEmpty(swagger.getBasePath)) None else Some(swagger.getBasePath)
+  private lazy val basePath = if (StringUtils.isEmpty(swagger.getBasePath)) RedwigglerPath(Seq()) else RedwigglerPath(swagger.getBasePath)
 
   lazy val definitions : Map[String, Schema] = for {
     (name, schemaModel) <- Option(swagger.getDefinitions).map(_.asScala).toSeq.flatten.toMap

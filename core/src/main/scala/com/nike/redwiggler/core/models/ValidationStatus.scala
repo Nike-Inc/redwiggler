@@ -4,7 +4,7 @@ import org.everit.json.schema.ValidationException
 
 sealed abstract class ValidationStatus(val verbPath: VerbPath, val code : Int) {
   def this(call : EndpointCall) = this(VerbPath(path = call.path, verb = call.verb), code = call.code)
-  def this(specification : EndpointSpecification) = this(VerbPath(path = specification.path, verb = specification.verb), code = specification.code)
+  def this(specification : EndpointSpecification) = this(VerbPath(path = specification.path.asString, verb = specification.verb), code = specification.code)
 }
 
 case class CallMatchedMultipleSpecifications(call : EndpointCall, specifications : Seq[EndpointSpecification]) extends ValidationStatus(call)

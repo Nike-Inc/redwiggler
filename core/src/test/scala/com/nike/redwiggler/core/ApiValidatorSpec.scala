@@ -7,7 +7,7 @@ class ApiValidatorSpec extends FunSpec with Matchers {
 
   val specificationA = EndpointSpecification(
     verb = HttpVerb.DELETE,
-    path = "/foo/bar",
+    path = Path("/foo/bar"),
     code = 200,
     responseSchema = None,
     requestSchema = None
@@ -15,7 +15,7 @@ class ApiValidatorSpec extends FunSpec with Matchers {
 
   val specificationB = EndpointSpecification(
     verb = HttpVerb.GET,
-    path = "/foo/bar",
+    path = Path("/foo/bar"),
     code = 200,
     responseSchema = None,
     requestSchema = None
@@ -24,7 +24,7 @@ class ApiValidatorSpec extends FunSpec with Matchers {
   val callA = EndpointCall(
     verb = specificationA.verb,
     responseBody = None,
-    path = specificationA.path,
+    path = specificationA.path.asString,
     responseHeaders = Seq(),
     requestBody = None,
     code = 200
@@ -47,8 +47,7 @@ class ApiValidatorSpec extends FunSpec with Matchers {
         specifications = Seq(specification),
         calls = Seq(call)
       )
-      statuses should have size 1
-      statuses should contain(ValidationPassed(call = call, specification = specification))
+      statuses should contain only ValidationPassed(call = call, specification = specification)
     }
     it("should fail validation with single matching call/specification but invalid schema") {
       val specification = specificationA.copy(responseSchema = Some(AllInvalidSchema))
@@ -57,29 +56,27 @@ class ApiValidatorSpec extends FunSpec with Matchers {
         specifications = Seq(specification),
         calls = Seq(call)
       )
-      statuses should have size 1
-      statuses should contain(SchemaValidationFailed(call = call, specification = specification, None))
+      statuses should contain only SchemaValidationFailed(call = call, specification = specification, None)
     }
   }
 
   it("should validate specification with no calls") {
     val statuses = ApiValidator(Seq(specificationA), Seq())
-    statuses should have size 1
-    statuses should contain(UntestedSpecification(specificationA))
+    statuses should contain only UntestedSpecification(specificationA)
   }
 
   it("should validate call with no specification") {
     val statuses = ApiValidator(Seq(), Seq(callA))
-    statuses should have size 1
-    statuses should contain(CallNotMatchedBySpecification(callA))
+    statuses should contain only CallNotMatchedBySpecification(callA)
   }
 
   describe("multiple") {
     it("should validate all non matching") {
       val statuses = ApiValidator(Seq(specificationA), Seq(callC))
-      statuses should have size 2
-      statuses should contain(UntestedSpecification(specificationA))
-      statuses should contain(CallNotMatchedBySpecification(callC))
+      statuses should contain only(
+        UntestedSpecification(specificationA),
+        CallNotMatchedBySpecification(callC)
+      )
     }
   }
 }

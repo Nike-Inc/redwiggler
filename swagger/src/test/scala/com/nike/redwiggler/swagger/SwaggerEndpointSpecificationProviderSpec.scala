@@ -3,7 +3,7 @@ package com.nike.redwiggler.swagger
 import java.io.InputStream
 
 import com.nike.redwiggler.core.models.HttpVerb._
-import com.nike.redwiggler.core.models.{EndpointSpecification, JsonSchema}
+import com.nike.redwiggler.core.models.{EndpointSpecification, JsonSchema, Path}
 import io.swagger.parser.SwaggerParser
 import org.everit.json.schema._
 import org.scalatest.{FunSpec, Matchers}
@@ -20,6 +20,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
       .getEndPointSpecs
       .asScala
   }
+
   private def loadProvider(is: InputStream) = {
     val swaggerParser = new SwaggerParser()
     val swagger = swaggerParser.parse(Source.fromInputStream(is).mkString)
@@ -35,7 +36,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
 
     val endpointSpecification = EndpointSpecification(
       verb = POST,
-      path = "/object/",
+      path = Path("/object"),
       code = 204,
       requestSchema = Some(JsonSchema(schema)),
       responseSchema = None
@@ -81,7 +82,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
       .build()
 
     val postCreate = EndpointSpecification(
-      path = "/my/resource/v2/",
+      path = Path("/my/resource/v2"),
       verb = POST,
       code = 201,
       responseSchema = Some(JsonSchema(itemSchema)),
@@ -113,7 +114,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
 
     val itemGetSuccess = EndpointSpecification(
       verb = GET,
-      path = "/my/resource/v2/{id}",
+      path = SwaggerPath("/my/resource/v2/{id}"),
       code = 200,
       requestSchema = None,
       responseSchema = Some(JsonSchema(itemSchema))
@@ -121,7 +122,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
 
     val itemGetFailure = EndpointSpecification(
       verb = GET,
-      path = "/my/resource/v2/{id}",
+      path = SwaggerPath("/my/resource/v2/{id}"),
       code = 401,
       requestSchema = None,
       responseSchema = None
@@ -145,8 +146,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
       } {
         it(endpoint.toString) {
           val path = endpoint.path
-          path should not contain "NULL"
-          path should equal("/")
+          path should equal(Path("/"))
         }
       }
     }
@@ -159,8 +159,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
       } {
         it(endpoint.toString) {
           val path = endpoint.path
-          path should not contain "NULL"
-          path should startWith("/object")
+          path should equal(Path("/object"))
         }
       }
     }
@@ -197,11 +196,11 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
       .build()
 
     val endpointSpecification = EndpointSpecification(
-      verb=POST,
-      path="/mypath",
-      code=204,
-      requestSchema=Some(JsonSchema(schema)),
-      responseSchema=None
+      verb = POST,
+      path = SwaggerPath("/mypath"),
+      code = 204,
+      requestSchema = Some(JsonSchema(schema)),
+      responseSchema = None
     )
 
     endpoints should equal(Seq(endpointSpecification))
