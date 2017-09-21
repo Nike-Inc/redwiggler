@@ -1,6 +1,6 @@
 package com.nike.redwiggler.core.models
 
-case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[ValidationStatus]]) {
+case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[ValidationStatus]]) extends Ordered[RedwigglerReport] {
 
   def title: String = verbPath.verb + " " + verbPath.path
 
@@ -11,6 +11,8 @@ case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[Validatio
   def total : Int = results.values.flatten.size
 
   def badge: String = s"$passed/$total"
+
+  override def compare(that: RedwigglerReport): Int = verbPath.compareTo(that.verbPath)
 }
 
 object RedwigglerReport {
@@ -24,4 +26,10 @@ object RedwigglerReport {
   }
 }
 
-case class VerbPath(verb : HttpVerb, path : String)
+case class VerbPath(verb : HttpVerb, path : String) extends Ordered[VerbPath] {
+  override def compare(that: VerbPath): Int = if (verb == that.verb) {
+    path.compareTo(that.path)
+  } else {
+    verb.name().compareTo(that.verb.name())
+  }
+}

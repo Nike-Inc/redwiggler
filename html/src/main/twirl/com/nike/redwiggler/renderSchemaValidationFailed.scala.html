@@ -5,11 +5,5 @@ Failed Schema Validation: @{failed.validationFailure.message}
 <ul>
 @for(cause <- failed.validationFailure.path) {
     <li>@{cause.message}</li>
-    <li>Errors:</li>
-    <ul>
-        @for(error <- cause.message) {
-            <li>@error</li>
-        }
-    </ul>
 }
 </ul>

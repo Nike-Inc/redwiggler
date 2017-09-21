@@ -5,6 +5,7 @@ import java.util
 import collection.JavaConverters._
 import com.nike.redwiggler.core.models.RedwigglerReport
 import com.nike.redwiggler.core._
+import com.nike.redwiggler.html.HtmlReportProcessor
 import com.nike.redwiggler.swagger.SwaggerEndpointSpecificationProvider
 import org.scalatest.{FunSpec, Matchers}
 import spray.json.{DefaultJsonProtocol, JsonParser}
@@ -34,7 +35,7 @@ class SwaggerSpec extends FunSpec with Matchers with DefaultJsonProtocol {
 
             expected should contain theSameElementsAs actual
           }
-        }
+        }.andThen(HtmlReportProcessor(new File("/tmp/" + testDir.getName + ".html"  )))
       )
     }
   }

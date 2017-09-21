@@ -1,5 +1,8 @@
 @import com.nike.redwiggler.core.models.SchemaValidationFailed
 @import com.nike.redwiggler.core.models.ValidationStatus
+@import com.nike.redwiggler.core.models.ValidationPassed
+@import com.nike.redwiggler.core.models.CallNotMatchedBySpecification
+@import com.nike.redwiggler.core.models.UntestedSpecification
 
 @(resultIndex: Int, codeAndResult: Map[Int, Seq[ValidationStatus]])
 
@@ -10,11 +13,12 @@
         <ul>
         @for(r <- result) {
             <li>
-            @if(r.isInstanceOf[SchemaValidationFailed]) {
-                @renderSchemaValidationFailed(r.asInstanceOf[SchemaValidationFailed])
-            } else {
-               @{r}
-            }
+                @r match {
+                    case svf : SchemaValidationFailed => {@renderSchemaValidationFailed(svf)}
+                    case ValidationPassed(_, _) => {Passed}
+                    case CallNotMatchedBySpecification(call) => {Not Matched}
+                    case UntestedSpecification(specification) => {Untested}
+                }
             </li>
         }
         </ul>

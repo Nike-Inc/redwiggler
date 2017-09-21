@@ -13,13 +13,13 @@ case class JsonSchema(schema : JsSchema) extends Schema {
     schema.validate(new JSONObject(payload))
     None
   } catch {
-    case ve : ValidationException => Some(validationException2ValidationFailure(ve))
+    case ve : ValidationException => Some(validationException2ValidationFailure(Seq())(ve))
   }
 
-  def validationException2ValidationFailure(cause : ValidationException) : ValidationFailure = ValidationFailure(
+  private def validationException2ValidationFailure(seen : Seq[ValidationException])(cause : ValidationException) : ValidationFailure = ValidationFailure(
     message = cause.getErrorMessage,
     pointer = cause.getPointerToViolation,
-    path = cause.getCausingExceptions.asScala.map(validationException2ValidationFailure)
+    path = cause.getCausingExceptions.asScala.map(validationException2ValidationFailure(seen ++ Seq(cause)))
   )
 }
 
