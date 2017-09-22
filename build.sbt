@@ -3,6 +3,8 @@ organization in ThisBuild := "com.nike.redwiggler"
 name := "redwiggler"
 
 scalaVersion in ThisBuild := "2.11.8"
+coverageMinimum in ThisBuild := 80
+coverageFailOnMinimum in ThisBuild := true
 
 lazy val core = (project in file("core"))
   .settings(
@@ -27,13 +29,20 @@ lazy val restassured = (project in file("restassured"))
   .dependsOn(core)
   .settings(
     libraryDependencies ++= Seq(
-      "com.jayway.restassured" % "rest-assured" % "2.9.0"
+      "com.jayway.restassured" % "rest-assured" % "2.9.0",
+      "org.mockito" % "mockito-core" % "2.7.22" % "test",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
     )
   )
 
 lazy val html = (project in file("html"))
   .dependsOn(core)
   .enablePlugins(SbtTwirl)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    )
+  )
 
 lazy val root = (project in file("."))
   .aggregate(core, swagger, restassured, html, `integration-tests`)
