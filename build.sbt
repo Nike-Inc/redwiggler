@@ -8,6 +8,10 @@ bintrayOrganization in ThisBuild := Some("nike")
 //stage releases on publish
 bintrayReleaseOnPublish in ThisBuild := false
 
+import org.scoverage.coveralls.Imports.CoverallsKeys._
+
+coverallsServiceName := Some("travis-pro")
+
 licenses in ThisBuild := Seq(
   "BSD" -> new java.net.URL("https://opensource.org/licenses/BSD-3-Clause")
 )

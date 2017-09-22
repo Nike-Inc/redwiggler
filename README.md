@@ -2,6 +2,7 @@
 The composting worm.  Composts your contract specification and tests and confirms that the contract specification is being followed.
 
 [![Build Status](https://travis-ci.com/Nike-Inc/redwiggler.svg?token=PmECSWCH8LFEKNdzr64F&branch=master)](https://travis-ci.com/Nike-Inc/redwiggler)
+[![Coverage Status](https://coveralls.io/repos/github/Nike-Inc/redwiggler/badge.svg?branch=master)](https://coveralls.io/github/Nike-Inc/redwiggler?branch=master)
 
 ## Current features:
 + Supports swagger 2.0
