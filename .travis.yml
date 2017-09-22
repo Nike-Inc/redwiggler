@@ -1,8 +1,8 @@
 language: scala
 scala:
-  - 2.11.8
+  - 2.12.3
 
-script: "sbt clean coverage test integration-tests/test"
+script: "sbt +clean +coverage +test +integration-tests/test"
 after_success:
-  - "sbt coverageReport"
-  - "sbt coverageAggregate"
+  - "sbt +coverageReport"
+  - "sbt +coverageAggregate"

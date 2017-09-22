@@ -1,5 +1,7 @@
-organization in ThisBuild := "com.nike.redwiggler"
+scalaVersion in ThisBuild := "2.12.3"
+crossScalaVersions := Seq("2.12.3", "2.11.11", "2.10.5")
 
+organization in ThisBuild := "com.nike.redwiggler"
 name := "redwiggler"
 
 bintrayOrganization in ThisBuild := Some("nike")
@@ -14,7 +16,6 @@ val generalSettings = Seq(
     bintrayPackage := "redwiggler"
 )
 
-scalaVersion in ThisBuild := "2.11.8"
 coverageMinimum in ThisBuild := 80
 coverageFailOnMinimum in ThisBuild := true
 
