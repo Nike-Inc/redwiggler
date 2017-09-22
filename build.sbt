@@ -60,7 +60,7 @@ lazy val html = (project in file("html"))
   .dependsOn(core)
   .enablePlugins(SbtTwirl)
   .settings(
-    name := "redwiggler-outputs-html",
+    name := "redwiggler-reports-html",
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.0.1" % "test"
     )

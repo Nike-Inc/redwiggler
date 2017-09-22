@@ -1,7 +1,9 @@
 @import com.nike.redwiggler.core.models.SchemaValidationFailed
 @import com.nike.redwiggler.core.models.ValidationStatus
 @import com.nike.redwiggler.core.models.ValidationPassed
+@import com.nike.redwiggler.core.models.ValidationFailed
 @import com.nike.redwiggler.core.models.CallNotMatchedBySpecification
+@import com.nike.redwiggler.core.models.CallMatchedMultipleSpecifications
 @import com.nike.redwiggler.core.models.UntestedSpecification
 
 @(resultIndex: Int, codeAndResult: Map[Int, Seq[ValidationStatus]])
@@ -17,7 +19,9 @@
                     case svf : SchemaValidationFailed => {@renderSchemaValidationFailed(svf)}
                     case ValidationPassed(_, _) => {Passed}
                     case CallNotMatchedBySpecification(call) => {Not Matched}
+                    case CallMatchedMultipleSpecifications(_, _) => {Call matched multiple specifications}
                     case UntestedSpecification(specification) => {Untested}
+                    case ValidationFailed(_, _) => {Failed}
                 }
             </li>
         }
