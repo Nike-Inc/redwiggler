@@ -55,8 +55,8 @@ class HtmlReportProcessorSpec extends FunSpec {
           SchemaValidationFailed(
             call = callB,
             specification = specificationB,
-            validationFailure = ValidationFailure(message = "failure", pointer = "/d", path = Seq(
-              ValidationFailure(message = "failure2", pointer = "/e", path = Seq())
+            validationFailure = ValidationFailure(message = "failure", pointer = None, path = Seq(
+              ValidationFailure(message = "failure2", pointer = None, path = Seq())
             ))
           )
         )

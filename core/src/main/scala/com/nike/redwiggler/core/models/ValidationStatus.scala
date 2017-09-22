@@ -12,4 +12,4 @@ case class UntestedSpecification(specification : EndpointSpecification) extends 
 case class ValidationPassed(call : EndpointCall, specification: EndpointSpecification) extends ValidationStatus(specification)
 case class ValidationFailed(call : EndpointCall, specification: EndpointSpecification) extends ValidationStatus(specification)
 
-case class ValidationFailure(message : String, pointer : String, path : Seq[ValidationFailure])
+case class ValidationFailure(message : String, pointer : Option[String], path : Seq[ValidationFailure])

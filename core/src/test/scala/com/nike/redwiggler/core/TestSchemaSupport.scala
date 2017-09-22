@@ -7,5 +7,5 @@ case object AllValidSchema extends Schema {
   override def validate(payload: String): Option[ValidationFailure] = None
 }
 case object AllInvalidSchema extends Schema {
-  override def validate(payload: String): Option[ValidationFailure] = Some(ValidationFailure(pointer = "pointer", message = "foobar", path = Seq()))
+  override def validate(payload: String): Option[ValidationFailure] = Some(ValidationFailure(pointer = Some("pointer"), message = "foobar", path = Seq()))
 }
