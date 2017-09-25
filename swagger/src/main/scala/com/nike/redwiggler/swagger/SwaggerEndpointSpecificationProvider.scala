@@ -171,4 +171,10 @@ object SwaggerEndpointSpecificationProvider {
     val swagger = swaggerParser.parse(Source.fromInputStream(is).mkString)
     SwaggerEndpointSpecificationProvider(swagger)
   }
+
+  def apply(s : String) : SwaggerEndpointSpecificationProvider = {
+    val swaggerParser = new SwaggerParser()
+    val swagger = swaggerParser.parse(s)
+    SwaggerEndpointSpecificationProvider(swagger)
+  }
 }
