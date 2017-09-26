@@ -299,4 +299,19 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
 
     endpoints should equal(Seq(endpointSpecification))
   }
+
+  describe("missing definitions") {
+    it("missing array items definition") {
+      val ex = intercept[SchemaNotFoundException] {
+        loadEndpoints(getClass.getResourceAsStream("missingDefinitions.arrayItems.swagger.yaml"))
+      }
+      ex.path.asString should equal(Seq("GetResponse", "array", "MyItem"))
+    }
+    it("missing object property definition") {
+      val ex = intercept[SchemaNotFoundException] {
+        loadEndpoints(getClass.getResourceAsStream("missingDefinitions.objectProperty.swagger.yaml"))
+      }
+      ex.path.asString should equal(Seq("GetResponse", "foo", "MyItem"))
+    }
+  }
 }
