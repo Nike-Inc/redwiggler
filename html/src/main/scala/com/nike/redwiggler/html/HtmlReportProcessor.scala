@@ -12,9 +12,9 @@ case class HtmlReportProcessor(path : File) extends ReportProcessor {
 
   import HtmlReportProcessor._
   override def process(reports: util.List[RedwigglerReport]): Unit = {
+    LOGGER.info("Writing " + path.toPath)
     val html = mainReport.apply(reports.asScala)
     val report = html.body
-    LOGGER.info("Writing " + path.toPath)
     Files.write(path.toPath, report.getBytes("utf-8"))
     LOGGER.info("Wrote " + path.toPath)
   }
