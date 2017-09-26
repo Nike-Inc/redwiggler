@@ -179,6 +179,24 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
     provider.definitions should equal(Map("GetResponse" -> expected))
   }
 
+  it("array schema model") {
+    val endpoints = loadEndpoints(getClass.getResourceAsStream("arraySchemaModel.swagger.yaml"))
+
+    val schema = ArraySchema.builder()
+      .addItemSchema(StringSchema.builder().build())
+      .build()
+
+    val endpointSpecification = EndpointSpecification(
+      verb = GET,
+      path = Path(),
+      code = 200,
+      responseSchema = Some(JsonSchema(schema)),
+      requestSchema = None
+    )
+
+    endpoints should equal(Seq(endpointSpecification))
+  }
+
   it("no properties") {
     val endpoints = loadEndpoints(getClass.getResourceAsStream("no_properties.swagger.yaml"))
 

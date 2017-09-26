@@ -114,6 +114,10 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
   private def formatValidator(format: String) = Option(format).map(FormatValidator.forFormat).getOrElse(FormatValidator.NONE)
 
   private def resolveSchema(model: Model): Schema = model match {
+    case arrayModel : ArrayModel =>
+      ArraySchema.builder()
+        .addItemSchema(resolveSchema(arrayModel.getItems))
+      .build()
     case refModel: RefModel =>
       val ref = refModel.get$ref.substring("#/definitions/".length)
       val resolvedModel = swagger.getDefinitions.get(ref)
@@ -145,6 +149,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
   }
 
   private def fromFormat(model: ModelImpl) = model.getFormat match {
+    case null => FormatValidator.NONE
     case "byte" => ByteFormatValidator
     case _ => FormatValidator.forFormat(model.getFormat)
   }
