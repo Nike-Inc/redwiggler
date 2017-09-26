@@ -54,6 +54,12 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       val ref = refProperty.get$ref.substring("#/definitions/".length)
       val model = swagger.getDefinitions.get(ref)
       resolveSchema(model)
+    case enumProperty: StringProperty if enumProperty.getEnum != null =>
+      EnumSchema.builder
+        .possibleValues(enumProperty.getEnum.asScala.toSet.asInstanceOf[Set[Object]].asJava)
+        .description(enumProperty.getDescription)
+        .title(enumProperty.getTitle)
+        .build
     case stringProperty: StringProperty =>
       StringSchema.builder
         .maxLength(stringProperty.getMaxLength)
@@ -108,11 +114,6 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
   private def formatValidator(format: String) = Option(format).map(FormatValidator.forFormat).getOrElse(FormatValidator.NONE)
 
   private def resolveSchema(model: Model): Schema = model match {
-    case arrayModel: ArrayModel =>
-      val arrayModel = model.asInstanceOf[ArrayModel]
-      ArraySchema.builder
-        .addItemSchema(resolveSchema(arrayModel.getItems))
-        .build
     case refModel: RefModel =>
       val ref = refModel.get$ref.substring("#/definitions/".length)
       val resolvedModel = swagger.getDefinitions.get(ref)
@@ -122,12 +123,6 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
         .subschema(resolveSchema(composedModel.getChild))
         .subschemas(composedModel.getAllOf.asScala.map(resolveSchema).asJava)
         .criterion(CombinedSchema.ALL_CRITERION)
-        .build
-    case modelImpl: ModelImpl if modelImpl.getEnum != null =>
-      EnumSchema.builder
-        .possibleValues(modelImpl.getEnum.asScala.toSet.asInstanceOf[Set[Object]].asJava)
-        .description(modelImpl.getDescription)
-        .title(modelImpl.getTitle)
         .build
     case modelImpl: ModelImpl if modelImpl.getProperties == null && "string" == modelImpl.getType =>
       StringSchema.builder

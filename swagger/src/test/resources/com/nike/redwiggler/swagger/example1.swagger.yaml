@@ -79,7 +79,9 @@ definitions:
         example: "TYPE1"
         x-required: true
         readOnly: true
-        enum: ["TYPE1", "TYPE2"]
+        enum:
+          - TYPE1
+          - TYPE2
     required:
       - documentType
   Item:
@@ -98,7 +100,9 @@ definitions:
       documentType:
         type: string
         description: The type of the document
-        enum: ["TYPE1", "TYPE2"]
+        enum:
+          - TYPE1
+          - TYPE2
         readOnly: true
       required:
         type: boolean

@@ -43,7 +43,8 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
         .description("foobar")
         .build()
       )
-      .addPropertySchema("documentType", StringSchema.builder()
+      .addPropertySchema("documentType", EnumSchema.builder()
+        .possibleValues(Set[AnyRef]("TYPE1", "TYPE2").asJava)
         .description("The type of the document")
         .build()
       )
@@ -56,8 +57,8 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
         .description("ISO 8601 Date")
         .build()
       )
-      .addPropertySchema("documentType", StringSchema.builder()
-        .formatValidator(FormatValidator.NONE)
+      .addPropertySchema("documentType", EnumSchema.builder()
+        .possibleValues(Set[AnyRef]("TYPE1", "TYPE2").asJava)
         .description("The type of the document")
         .build()
       )
@@ -176,6 +177,72 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
       .build()
 
     provider.definitions should equal(Map("GetResponse" -> expected))
+  }
+
+  it("parses enum types") {
+    val endpoints = loadEndpoints(getClass.getResourceAsStream("enum_parsing.swagger.yaml"))
+
+    val schema = ObjectSchema.builder()
+      .addPropertySchema("myEnum", EnumSchema.builder()
+        .possibleValues(Set[AnyRef]("foo", "bar", "baz").asJava)
+        .build())
+      .build()
+
+    val endpointSpecification = EndpointSpecification(
+      verb = GET,
+      path = Path(),
+      code = 200,
+      responseSchema = Some(JsonSchema(schema)),
+      requestSchema = None
+    )
+
+    endpoints should equal(Seq(endpointSpecification))
+  }
+
+  it("parses array types") {
+    val endpoints = loadEndpoints(getClass.getResourceAsStream("array_parsing.swagger.yaml"))
+
+    val schema = ObjectSchema.builder()
+      .addPropertySchema("myArray", ArraySchema.builder()
+        .addItemSchema(StringSchema.builder().build())
+        .build())
+      .build()
+
+    val endpointSpecification = EndpointSpecification(
+      verb = GET,
+      path = Path(),
+      code = 200,
+      responseSchema = Some(JsonSchema(schema)),
+      requestSchema = None
+    )
+
+    endpoints should equal(Seq(endpointSpecification))
+  }
+
+  it("parses allOf types") {
+    val endpoints = loadEndpoints(getClass.getResourceAsStream("allOf_parsing.swagger.yaml"))
+
+    val schema = CombinedSchema.builder()
+      .criterion(CombinedSchema.ALL_CRITERION)
+      .subschemas(Seq[Schema](
+        ObjectSchema.builder()
+          .addPropertySchema("baz", StringSchema.builder().build())
+        .build(),
+        ObjectSchema.builder()
+          .addPropertySchema("bar", StringSchema.builder().build())
+          .build()
+      ).asJava)
+      .build()
+
+    val endpointSpecification = EndpointSpecification(
+      verb = GET,
+      path = Path(),
+      code = 200,
+      responseSchema = Some(JsonSchema(schema)),
+      requestSchema = None
+    )
+
+    endpoints should equal(Seq(endpointSpecification))
   }
 
   it("byteInputOperation") {
