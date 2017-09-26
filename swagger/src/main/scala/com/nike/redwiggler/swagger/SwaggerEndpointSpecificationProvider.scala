@@ -128,10 +128,10 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       StringSchema.builder
         .formatValidator(fromFormat(modelImpl))
         .build
-    case modelImpl: ModelImpl if !modelImpl.getProperties.isEmpty =>
+    case modelImpl: ModelImpl =>
       val objectSchema = ObjectSchema.builder
       for {
-        (propertyName, property) <- modelImpl.getProperties.asScala
+        (propertyName, property) <- Option(modelImpl.getProperties).map(_.asScala).getOrElse(Seq())
       } {
         objectSchema.addPropertySchema(propertyName, resolveSchema(property))
       }
