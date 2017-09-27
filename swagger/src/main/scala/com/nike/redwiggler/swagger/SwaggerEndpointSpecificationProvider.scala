@@ -25,7 +25,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       EndpointSpecification(
         code = Integer.parseInt(statusCode),
         path = basePath / SwaggerPath(pathUri),
-        responseSchema = Option(response.getSchema).map(resolveSchema).map(JsonSchema.apply),
+        responseSchema = Option(response.getSchema).map(resolveSchema(RootPath)).map(JsonSchema.apply),
         requestSchema = findRequestSchema(path, operation).map(JsonSchema.apply),
         verb = HttpVerb.from(method.name())
       )
@@ -37,7 +37,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
   lazy val definitions : Map[String, Schema] = for {
     (name, schemaModel) <- Option(swagger.getDefinitions).map(_.asScala).toSeq.flatten.toMap
   } yield {
-    name -> resolveSchema(schemaModel)
+    name -> resolveSchemaModel(RootPath)(schemaModel)
   }
 
   private def findRequestSchema(path: Path, operation: Operation) = {
@@ -46,14 +46,14 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       Option(swagger.getParameters).map(_.asScala.values).toSeq.flatten
   }.filter(_.getIn == "body")
     .collect {
-      case bodyParameter: BodyParameter => resolveSchema(bodyParameter.getSchema)
+      case bodyParameter: BodyParameter => resolveSchemaModel(RootPath)(bodyParameter.getSchema)
     }.headOption
 
-  private def resolveSchema(schemaProperty: Property): Schema = schemaProperty match {
+  private def resolveSchema(path : SchemaPath)(schemaProperty: Property): Schema = schemaProperty match {
     case refProperty: RefProperty =>
-      val ref = refProperty.get$ref.substring("#/definitions/".length)
+      val ref = refProperty.getSimpleRef
       val model = swagger.getDefinitions.get(ref)
-      resolveSchema(model)
+      resolveSchemaModel(path ++ schemaProperty)(model)
     case enumProperty: StringProperty if enumProperty.getEnum != null =>
       EnumSchema.builder
         .possibleValues(enumProperty.getEnum.asScala.toSet.asInstanceOf[Set[Object]].asJava)
@@ -73,7 +73,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       ArraySchema.builder
         .maxItems(arrayProperty.getMaxItems)
         .minItems(arrayProperty.getMinItems)
-        .addItemSchema(resolveSchema(arrayProperty.getItems))
+        .addItemSchema(resolveSchema(path ++ arrayProperty)(arrayProperty.getItems))
         .title(arrayProperty.getTitle)
         .description(arrayProperty.getDescription)
         .build
@@ -99,7 +99,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       val objectSchema = ObjectSchema.builder
       for {
         (propertyName, property) <- objectProperty.getProperties.asScala
-        propertySchema = resolveSchema(property)
+        propertySchema = resolveSchema(path ++ objectProperty)(property)
       } {
         objectSchema.addPropertySchema(propertyName, propertySchema)
       }
@@ -113,27 +113,33 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
 
   private def formatValidator(format: String) = Option(format).map(FormatValidator.forFormat).getOrElse(FormatValidator.NONE)
 
-  private def resolveSchema(model: Model): Schema = model match {
+  private def resolveSchemaModel(path: SchemaPath)(model: Model): Schema = model match {
+    case null =>
+      throw SchemaNotFoundException(path)
+    case arrayModel : ArrayModel =>
+      ArraySchema.builder()
+        .addItemSchema(resolveSchema(path ++ arrayModel)(arrayModel.getItems))
+      .build()
     case refModel: RefModel =>
-      val ref = refModel.get$ref.substring("#/definitions/".length)
+      val ref = refModel.getSimpleRef
       val resolvedModel = swagger.getDefinitions.get(ref)
-      resolveSchema(resolvedModel)
+      resolveSchemaModel(path ++ refModel)(resolvedModel)
     case composedModel: ComposedModel =>
       CombinedSchema.builder
-        .subschema(resolveSchema(composedModel.getChild))
-        .subschemas(composedModel.getAllOf.asScala.map(resolveSchema).asJava)
+        .subschema(resolveSchemaModel(path ++ composedModel)(composedModel.getChild))
+        .subschemas(composedModel.getAllOf.asScala.map(resolveSchemaModel(path ++ composedModel)).asJava)
         .criterion(CombinedSchema.ALL_CRITERION)
         .build
     case modelImpl: ModelImpl if modelImpl.getProperties == null && "string" == modelImpl.getType =>
       StringSchema.builder
         .formatValidator(fromFormat(modelImpl))
         .build
-    case modelImpl: ModelImpl if !modelImpl.getProperties.isEmpty =>
+    case modelImpl: ModelImpl =>
       val objectSchema = ObjectSchema.builder
       for {
-        (propertyName, property) <- modelImpl.getProperties.asScala
+        (propertyName, property) <- Option(modelImpl.getProperties).map(_.asScala).getOrElse(Seq())
       } {
-        objectSchema.addPropertySchema(propertyName, resolveSchema(property))
+        objectSchema.addPropertySchema(propertyName, resolveSchema(path ++ propertyName)(property))
       }
       Option(modelImpl.getRequired).map(_.asScala).toSeq.flatten.foreach(objectSchema.addRequiredProperty)
       objectSchema
@@ -145,6 +151,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
   }
 
   private def fromFormat(model: ModelImpl) = model.getFormat match {
+    case null => FormatValidator.NONE
     case "byte" => ByteFormatValidator
     case _ => FormatValidator.forFormat(model.getFormat)
   }
@@ -173,3 +180,5 @@ object SwaggerEndpointSpecificationProvider {
     SwaggerEndpointSpecificationProvider(swagger)
   }
 }
+
+case class SchemaNotFoundException(path : SchemaPath) extends IllegalStateException

@@ -179,6 +179,43 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
     provider.definitions should equal(Map("GetResponse" -> expected))
   }
 
+  it("array schema model") {
+    val endpoints = loadEndpoints(getClass.getResourceAsStream("arraySchemaModel.swagger.yaml"))
+
+    val schema = ArraySchema.builder()
+      .addItemSchema(StringSchema.builder().build())
+      .build()
+
+    val endpointSpecification = EndpointSpecification(
+      verb = GET,
+      path = Path(),
+      code = 200,
+      responseSchema = Some(JsonSchema(schema)),
+      requestSchema = None
+    )
+
+    endpoints should equal(Seq(endpointSpecification))
+  }
+
+  it("no properties") {
+    val endpoints = loadEndpoints(getClass.getResourceAsStream("no_properties.swagger.yaml"))
+
+    val schema = ObjectSchema.builder()
+      .title("myTitle")
+      .description("hello world")
+      .build()
+
+    val endpointSpecification = EndpointSpecification(
+      verb = GET,
+      path = Path(),
+      code = 200,
+      responseSchema = Some(JsonSchema(schema)),
+      requestSchema = None
+    )
+
+    endpoints should equal(Seq(endpointSpecification))
+  }
+
   it("parses enum types") {
     val endpoints = loadEndpoints(getClass.getResourceAsStream("enum_parsing.swagger.yaml"))
 
@@ -227,7 +264,7 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
       .subschemas(Seq[Schema](
         ObjectSchema.builder()
           .addPropertySchema("baz", StringSchema.builder().build())
-        .build(),
+          .build(),
         ObjectSchema.builder()
           .addPropertySchema("bar", StringSchema.builder().build())
           .build()
@@ -261,5 +298,20 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
     )
 
     endpoints should equal(Seq(endpointSpecification))
+  }
+
+  describe("missing definitions") {
+    it("missing array items definition") {
+      val ex = intercept[SchemaNotFoundException] {
+        loadEndpoints(getClass.getResourceAsStream("missingDefinitions.arrayItems.swagger.yaml"))
+      }
+      ex.path.asString should equal(Seq("GetResponse", "array", "MyItem"))
+    }
+    it("missing object property definition") {
+      val ex = intercept[SchemaNotFoundException] {
+        loadEndpoints(getClass.getResourceAsStream("missingDefinitions.objectProperty.swagger.yaml"))
+      }
+      ex.path.asString should equal(Seq("GetResponse", "foo", "MyItem"))
+    }
   }
 }

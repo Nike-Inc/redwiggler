@@ -1,0 +1,25 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: MyService
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json;charset=utf-8
+paths:
+  /:
+    get:
+      summary: summary
+      description: description
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: "#/definitions/GetResponse"
+definitions:
+  GetResponse:
+    type: object
+    title: myTitle
+    description: "hello world"
