@@ -9,9 +9,38 @@ The composting worm.  Composts your contract specification and tests and confirm
 
 RedWiggler has 3 main components:
 
-1. EndpointSpecifications: defines the endpoint contract. Defined from the API documentation (such as swagger)
+1. EndpointSpecifications: defines the endpoint contract. Defined from the API documentation
+
+    * Swagger Support: [ ![Download](https://api.bintray.com/packages/nike/maven/redwiggler-swagger/images/download.svg) ](https://bintray.com/nike/maven/redwiggler-swagger/_latestVersion)
+  
 2. EndpointCall: An instance of a request/response to the service to be matched against the EndpointSpecification
-3. OutputProcessor: Takes the result of the analysis and generates output (such as an html page)
+3. ReportProcessor: Takes the result of the analysis and generates output (such as an html page)
+
+    * HTML Reports: [ ![Downlaod](https://api.bintray.com/packages/nike/maven/redwiggler-reports-html/images/download.svg) ](https://bintray.com/nike/maven/redwiggler-reports-html/_latestVersion)
+
+## Usage
+
+Currently, the jars are only available on bintray.
+
+### Gradle
+```groovy
+    repositories {
+        jCenter()
+    }
+    dependencies {
+        compile groupId: 'com.nike.redwiggler', artifactId: 'redwiggler-core_2.12', verson: redwigglerVersion
+        compile groupId: 'com.nike.redwiggler', artifactId: 'redwiggler-swagger_2.12', verson: redwigglerVersion
+        compile groupId: 'com.nike.redwiggler', artifactId: 'redwiggler-reports-html_2.12', verson: redwigglerVersion
+        compile groupId: 'com.nike.redwiggler', artifactId: 'redwiggler-restassured_2.12', verson: redwigglerVersion
+    }
+```
+
+### Sbt
+```sbt
+    Resolvers += Resolver.jcenterRepo
+    libraryDependencies ++= Seq("core", "swagger", "reports-html", "restassured")
+      .map(library => "com.nike.redwiggler" %% library % redwigglerVersion)
+```
 
 ## Examples
 
