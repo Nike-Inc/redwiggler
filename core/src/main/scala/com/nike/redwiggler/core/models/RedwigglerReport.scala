@@ -30,6 +30,6 @@ case class VerbPath(verb : HttpVerb, path : String) extends Ordered[VerbPath] {
   override def compare(that: VerbPath): Int = if (verb == that.verb) {
     path.compareTo(that.path)
   } else {
-    verb.name().compareTo(that.verb.name())
+    verb.name.compareTo(that.verb.name)
   }
 }

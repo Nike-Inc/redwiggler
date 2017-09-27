@@ -18,9 +18,9 @@ case class EndpointCall(
 
 object EndpointCall extends DefaultJsonProtocol {
   implicit object httpVerbFormat extends JsonFormat[HttpVerb] {
-    override def read(json: JsValue): HttpVerb = HttpVerb.valueOf(json.convertTo[String])
+    override def read(json: JsValue): HttpVerb = HttpVerb.from(json.convertTo[String])
 
-    override def write(obj: HttpVerb): JsValue = JsString(obj.name())
+    override def write(obj: HttpVerb): JsValue = JsString(obj.name)
   }
   implicit val format = jsonFormat6(EndpointCall.apply)
 
