@@ -1,17 +1,14 @@
 package com.nike.redwiggler.core
 
 import java.io.File
-import java.util
-import java.util.Collections.singletonList
-import collection.JavaConverters._
 
 import com.nike.redwiggler.core.models.EndpointCall
 
-case class FileBasedEndpointCallProvider(files : util.List[File]) extends EndpointCallProvider {
+case class FileBasedEndpointCallProvider(files : Seq[File]) extends EndpointCallProvider {
 
   def this(file: File) {
-    this(singletonList(file))
+    this(Seq(file))
   }
 
-  override def getCalls: util.List[EndpointCall] = files.asScala.map(EndpointCall.fromFile).asJava
+  override def getCalls: Seq[EndpointCall] = files.map(EndpointCall.fromFile)
 }

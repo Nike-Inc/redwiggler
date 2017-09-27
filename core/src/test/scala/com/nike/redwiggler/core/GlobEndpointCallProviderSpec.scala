@@ -5,8 +5,6 @@ import java.io.{File, FileOutputStream, PrintWriter}
 import com.nike.redwiggler.core.models.{EndpointCall, HttpVerb}
 import org.scalatest.{Matchers, Outcome, fixture}
 
-import collection.JavaConverters._
-
 class GlobEndpointCallProviderSpec extends fixture.FunSpec with Matchers {
 
   it("should find files") { fixture =>
@@ -23,7 +21,7 @@ class GlobEndpointCallProviderSpec extends fixture.FunSpec with Matchers {
       """.stripMargin)
 
     val glob = new GlobEndpointCallProvider(fixture.dir, ".*.json")
-    val calls = glob.getCalls.asScala
+    val calls = glob.getCalls
     calls should contain only EndpointCall(
         verb = HttpVerb.GET,
         responseBody = Some("hello world"),

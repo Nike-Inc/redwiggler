@@ -1,9 +1,7 @@
 package com.nike.redwiggler.core
 
 import java.io.File
-import java.util
 import java.util.regex.Pattern
-import collection.JavaConverters._
 
 import com.nike.redwiggler.core.models.EndpointCall
 import org.slf4j.LoggerFactory
@@ -12,7 +10,7 @@ case class GlobEndpointCallProvider(dir : File, pattern : String) extends Endpoi
 
   import GlobEndpointCallProvider._
 
-  override def getCalls: util.List[EndpointCall] = {
+  override def getCalls(): Seq[EndpointCall] = {
     LOGGER.info(s"Doing glob match dir=$dir pattern=$pattern")
     val callProvider = FileBasedEndpointCallProvider(findFiles)
     callProvider.getCalls
@@ -28,7 +26,7 @@ case class GlobEndpointCallProvider(dir : File, pattern : String) extends Endpoi
     LOGGER.info(s"Found glob match dir=$dir pattern=$pattern count=${files.length}")
     files.filter { file =>
       !file.isDirectory && Pattern.matches(pattern, file.getName)
-    }.toSeq.asJava
+    }.toSeq
   }
 
 }

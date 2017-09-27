@@ -5,8 +5,6 @@ import java.io.File
 import com.nike.redwiggler.core.models._
 import org.scalatest.{Outcome, fixture}
 
-import collection.JavaConverters._
-
 class HtmlReportProcessorSpec extends fixture.FunSpec {
 
   val specificationA = EndpointSpecification(
@@ -69,7 +67,7 @@ class HtmlReportProcessorSpec extends fixture.FunSpec {
               result
             )
           )
-        ).asJava)
+        ))
       }
     }
   }
@@ -91,7 +89,7 @@ class HtmlReportProcessorSpec extends fixture.FunSpec {
           )
         )
       )
-    ).asJava)
+    ))
   }
 
   override protected def withFixture(test: OneArgTest): Outcome = withFixture(test.toNoArgTest(new FixtureParam))

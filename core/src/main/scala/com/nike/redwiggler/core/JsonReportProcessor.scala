@@ -1,9 +1,7 @@
 package com.nike.redwiggler.core
 
 import java.io._
-import java.util
 
-import collection.JavaConverters._
 import com.nike.redwiggler.core.models.{HttpVerb, RedwigglerReport}
 import spray.json.DefaultJsonProtocol._
 import spray.json.{JsString, JsValue, JsonFormat, JsonWriter}
@@ -19,9 +17,9 @@ object RedwigglerReportDetails {
 }
 
 case class JsonReportProcessor(file : File) extends ReportProcessor {
-  override def process(reports: util.List[RedwigglerReport]): Unit = {
+  override def process(reports: Seq[RedwigglerReport]): Unit = {
     val out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(file)))
-    out.print(implicitly[JsonWriter[Seq[RedwigglerReportDetails]]].write(reports.asScala.map(report => {
+    out.print(implicitly[JsonWriter[Seq[RedwigglerReportDetails]]].write(reports.map(report => {
       RedwigglerReportDetails(
         verb = report.verbPath.verb,
         path = report.verbPath.path,

@@ -15,7 +15,7 @@ import scala.language.implicitConversions
 
 case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends EndpointSpecificationProvider {
 
-  def getEndPointSpecs: util.List[EndpointSpecification] = {
+  override def getEndPointSpecs: Seq[EndpointSpecification] = {
     for {
       paths <- Option(swagger.getPaths).toSeq
       (pathUri, path) <- paths.asScala
@@ -30,7 +30,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
         verb = HttpVerb.from(method.name())
       )
     }
-  }.asJava
+  }
 
   private lazy val basePath = if (StringUtils.isEmpty(swagger.getBasePath)) RedwigglerPath(Seq()) else RedwigglerPath(swagger.getBasePath)
 

@@ -14,7 +14,6 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
   private def loadEndpoints(is: InputStream) = {
     SwaggerEndpointSpecificationProvider(is)
       .getEndPointSpecs
-      .asScala
   }
 
   it("should get single definition") {
