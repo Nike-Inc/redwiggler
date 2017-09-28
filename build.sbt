@@ -18,6 +18,7 @@ coverageMinimum in ThisBuild := 80
 coverageFailOnMinimum in ThisBuild := true
 
 lazy val core = (project in file("core"))
+  .enablePlugins(ScalaJSPlugin)
   .settings(
     name := "redwiggler-core",
     libraryDependencies ++= Seq(
@@ -29,6 +30,7 @@ lazy val core = (project in file("core"))
   )
 
 lazy val swagger = (project in file("swagger"))
+  .enablePlugins(ScalaJSPlugin)
   .dependsOn(core)
   .settings(
     name := "redwiggler-swagger",
@@ -50,6 +52,7 @@ lazy val restassured = (project in file("restassured"))
   )
 
 lazy val html = (project in file("html"))
+  .enablePlugins(ScalaJSPlugin)
   .dependsOn(core)
   .enablePlugins(SbtTwirl)
   .settings(

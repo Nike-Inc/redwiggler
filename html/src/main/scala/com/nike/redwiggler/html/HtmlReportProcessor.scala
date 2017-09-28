@@ -6,19 +6,45 @@ import java.nio.file.Files
 import com.nike.redwiggler.core.ReportProcessor
 import com.nike.redwiggler.core.models.RedwigglerReport
 
-case class HtmlReportProcessor(path : File) extends ReportProcessor {
+import scala.language.implicitConversions
+import scala.scalajs.js
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
-  import HtmlReportProcessor._
+@JSExportTopLevel("HtmlReportProcessor")
+case class HtmlReportProcessor(fileWriter : FileWriter) extends ReportProcessor {
+
   override def process(reports: Seq[RedwigglerReport]): Unit = {
-    LOGGER.info("Writing " + path.toPath)
+    println("Writing " + fileWriter)
     val html = mainReport.apply(reports)
-    val report = html.body
-    Files.write(path.toPath, report.getBytes("utf-8"))
-    LOGGER.info("Wrote " + path.toPath)
+    fileWriter.write(html.body)
+    println("Wrote " + fileWriter)
+  }
+
+  @JSExport("process")
+  def jsProcess(reports: js.Array[RedwigglerReport]): Unit = {
+    println("processing")
+    process(reports.toArray.toSeq)
   }
 
 }
 
-object HtmlReportProcessor {
-  val LOGGER = org.slf4j.LoggerFactory.getLogger(getClass)
+trait FileWriter {
+  def write(html : String)
+}
+
+@JSExportTopLevel("FunctionFileWriter")
+case class FunctionFileWriter(fn : js.Function1[String, Unit]) extends FileWriter {
+  override def write(html: String): Unit = {
+    fn(html)
+  }
+}
+
+object FileWriter {
+  implicit def file2FileWriter(file : File) : FileWriter = FileFileWriter(file)
+}
+
+case class FileFileWriter(path : File) extends FileWriter {
+  override def write(html: String): Unit = {
+    Files.write(path.toPath, html.getBytes("UTF-8"))
+  }
 }

@@ -1,5 +1,8 @@
 package com.nike.redwiggler.core.models
 
+import scala.scalajs.js.annotation.JSExportTopLevel
+
+@JSExportTopLevel("HttpVerb")
 case class HttpVerb(name: String)
 
 object HttpVerb {

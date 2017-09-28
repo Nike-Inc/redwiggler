@@ -1,7 +1,11 @@
 package com.nike.redwiggler.core.models
 
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+
+@JSExportTopLevel("RedwigglerReport")
 case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[ValidationStatus]]) extends Ordered[RedwigglerReport] {
 
+  @JSExport
   def title: String = verbPath.verb + " " + verbPath.path
 
   def passed : Int = results.values.flatten.collect {
@@ -10,8 +14,10 @@ case class RedwigglerReport(verbPath: VerbPath, results : Map[Int, Seq[Validatio
 
   def total : Int = results.values.flatten.size
 
+  @JSExport
   def badge: String = s"$passed/$total"
 
+  @JSExport("compare")
   override def compare(that: RedwigglerReport): Int = verbPath.compareTo(that.verbPath)
 }
 

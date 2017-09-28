@@ -2,7 +2,7 @@
 
 @(reports : Seq[RedwigglerReport])
 
-@for((report, index) <- reports.sorted.zipWithIndex) {
-    @testResultLine(index, report.title, report.badge)
-    @testDetailLine(index, report.results)
+@for(report <- reports) {
+    @testResultLine(0, report.title, report.badge)
+    @testDetailLine(0, report.results)
 }

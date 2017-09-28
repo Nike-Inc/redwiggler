@@ -6,7 +6,10 @@ import java.nio.file.Files
 import spray.json.{DefaultJsonProtocol, JsString, JsValue, JsonFormat, JsonParser}
 
 import scala.io.Source
+import scala.scalajs.js
+import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
+@JSExportTopLevel("EndpointCall")
 case class EndpointCall(
                          verb: HttpVerb,
                          responseBody: Option[String],
@@ -27,6 +30,18 @@ object EndpointCall extends DefaultJsonProtocol {
   def fromFile(file: File) : EndpointCall = JsonParser(Source.fromFile(file).mkString).convertTo[EndpointCall]
   def toFile(file: File, endpointCall : EndpointCall) : Unit = {
     Files.write(file.toPath, format.write(endpointCall).prettyPrint.getBytes("UTF-8"))
-    JsonParser(Source.fromFile(file).mkString).convertTo[EndpointCall]
   }
+}
+
+@JSExportTopLevel("EndpointCallParser")
+object EndpointCallParser {
+  @JSExport("fromObject")
+  def fromJsObject(obj : js.Dynamic) : EndpointCall = EndpointCall(
+    verb = HttpVerb.from(obj.verb.asInstanceOf[String]),
+    responseBody = Option(obj.responseBody.asInstanceOf[String]),
+    path = obj.path.asInstanceOf[String],
+    responseHeaders = Seq(),
+    requestBody = Option(obj.requestBody.asInstanceOf[String]),
+    code = obj.code.asInstanceOf[Int]
+  )
 }
