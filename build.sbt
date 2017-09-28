@@ -17,6 +17,8 @@ licenses in ThisBuild := Seq(
 coverageMinimum in ThisBuild := 80
 coverageFailOnMinimum in ThisBuild := true
 
+releaseCrossBuild in ThisBuild := true
+
 lazy val core = (project in file("core"))
   .settings(
     name := "redwiggler-core",
