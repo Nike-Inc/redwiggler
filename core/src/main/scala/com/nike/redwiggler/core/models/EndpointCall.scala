@@ -27,6 +27,5 @@ object EndpointCall extends DefaultJsonProtocol {
   def fromFile(file: File) : EndpointCall = JsonParser(Source.fromFile(file).mkString).convertTo[EndpointCall]
   def toFile(file: File, endpointCall : EndpointCall) : Unit = {
     Files.write(file.toPath, format.write(endpointCall).prettyPrint.getBytes("UTF-8"))
-    JsonParser(Source.fromFile(file).mkString).convertTo[EndpointCall]
   }
 }
