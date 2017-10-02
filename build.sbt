@@ -40,6 +40,15 @@ lazy val swagger = (project in file("swagger"))
     )
   )
 
+lazy val blueprint = (project in file("blueprint"))
+  .dependsOn(core)
+  .settings(
+    name := "redwiggler-blueprint",
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    )
+  )
+
 lazy val restassured = (project in file("restassured"))
   .dependsOn(core)
   .settings(
@@ -62,7 +71,7 @@ lazy val html = (project in file("html"))
   )
 
 lazy val root = (project in file("."))
-  .aggregate(core, swagger, restassured, html)
+  .aggregate(core, swagger, restassured, html, blueprint)
   .dependsOn(core, swagger, html)
   .settings(
     libraryDependencies ++= Seq(

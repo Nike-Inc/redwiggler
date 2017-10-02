@@ -2,6 +2,9 @@ language: scala
 scala:
   - 2.12.3
 
+before_script:
+  - "npm install protagonist"
+  - "./blueprint/setup_drafter"
 script:
   - "sbt +test +integration-tests/test +readme/test"
   - "sbt clean coverage test integration-tests/test readme/test coverageReport"
