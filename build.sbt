@@ -73,6 +73,3 @@ lazy val root = (project in file("."))
   .settings(
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", new File(target.value, "/test-reports-html").getAbsolutePath)
   )
-
-lazy val `integration-tests` = (project in file("integration-tests"))
-  .dependsOn(core, swagger, html)
