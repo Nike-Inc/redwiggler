@@ -66,18 +66,13 @@ lazy val html = (project in file("html"))
   )
 
 lazy val root = (project in file("."))
-  .aggregate(core, swagger, restassured, html)
-  .dependsOn(core, swagger, html)
-
-lazy val `integration-tests` = (project in file("integration-tests"))
-  .dependsOn(core, swagger, html)
-
-lazy val readme = (project in file("readme"))
-  .dependsOn(core, swagger, html)
   .enablePlugins(ReadmeTests)
   .settings(ReadmeTests.projectSettings)
+  .aggregate(core, swagger, restassured, html)
+  .dependsOn(core, swagger, html)
   .settings(
-    readmeFile := new File((baseDirectory in root).value, "README.md"),
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", new File(target.value, "/test-reports-html").getAbsolutePath)
   )
 
+lazy val `integration-tests` = (project in file("integration-tests"))
+  .dependsOn(core, swagger, html)
