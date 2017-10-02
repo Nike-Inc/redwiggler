@@ -78,7 +78,7 @@ lazy val root = (project in file("."))
   .aggregate(core, swagger, restassured, html, blueprint)
   .enablePlugins(ReadmeTests)
   .settings(ReadmeTests.projectSettings)
-  .dependsOn(core, swagger, html)
+  .dependsOn(core, swagger, html, blueprint)
   .settings(
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", new File(target.value, "/test-reports-html").getAbsolutePath)
   )

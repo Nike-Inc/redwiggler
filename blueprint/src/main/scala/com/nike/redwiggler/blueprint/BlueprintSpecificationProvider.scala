@@ -1,5 +1,6 @@
 package com.nike.redwiggler.blueprint
 
+import java.io.File
 import java.util
 
 import com.nike.redwiggler.blueprint.parser.BlueprintParser
@@ -7,6 +8,7 @@ import com.nike.redwiggler.core.EndpointSpecificationProvider
 import com.nike.redwiggler.core.models._
 
 import collection.JavaConverters._
+import scala.io.Source
 
 case class BlueprintSpecificationProvider(blueprint : String, blueprintParser: BlueprintParser) extends EndpointSpecificationProvider {
 
@@ -36,5 +38,11 @@ case class BlueprintSpecificationProvider(blueprint : String, blueprintParser: B
     import org.json.JSONTokener
     val rawSchema = new JSONObject(new JSONTokener(schema))
     Some(JsonSchema(SchemaLoader.load(rawSchema)))
+  }
+}
+
+object BlueprintSpecificationProvider {
+  def apply(apiMd: File, blueprintParser: BlueprintParser) : BlueprintSpecificationProvider = {
+    BlueprintSpecificationProvider(Source.fromFile(apiMd).mkString, blueprintParser)
   }
 }

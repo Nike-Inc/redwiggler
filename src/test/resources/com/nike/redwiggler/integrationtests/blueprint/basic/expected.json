@@ -1,0 +1,20 @@
+[
+  {
+    "verb": "POST",
+    "path": "/my/resource/v2",
+    "passed": 0,
+    "total": 1
+  },
+  {
+    "verb": "GET",
+    "path": "/foobar",
+    "passed": 0,
+    "total": 1
+  },
+  {
+    "verb": "GET",
+    "path": "/my/resource/v2/{id}",
+    "passed": 1,
+    "total": 2
+  }
+]
