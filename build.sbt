@@ -48,6 +48,9 @@ lazy val swagger = (project in file("swagger"))
 
 lazy val blueprint = (project in file("blueprint"))
   .dependsOn(core)
+  .dependsOn(html % "compile->test")
+  .enablePlugins(ReadmeTests)
+  .settings(ReadmeTests.projectSettings)
   .settings(
     name := "redwiggler-blueprint",
     libraryDependencies ++= Seq(
