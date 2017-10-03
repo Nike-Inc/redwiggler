@@ -1,10 +1,10 @@
 package com.nike.redwiggler.swagger
 
-import io.swagger.models.{ArrayModel, Model, RefModel}
-import io.swagger.models.properties.{Property, RefProperty}
+import io.swagger.models.{ArrayModel, Model}
+import io.swagger.models.properties.{ArrayProperty, Property, RefProperty}
 
 sealed trait SchemaPath {
-  def ++(path : SchemaPath) : SchemaPath = ComposedPath(this, path)
+  def /(path : SchemaPath) : SchemaPath = ComposedPath(this, path)
 
   def asString : Seq[String]
 }
@@ -29,6 +29,7 @@ case class ModelPath(model : Model) extends SchemaPath {
 case class PropertyPath(property: Property) extends SchemaPath {
   override def asString: Seq[String] = Seq(property match {
     case refProperty : RefProperty => refProperty.getSimpleRef
+    case arrayProperty : ArrayProperty => "array"
     case _ => property.getTitle
   })
 }
@@ -36,7 +37,7 @@ case class ComposedPath(left: SchemaPath, right: SchemaPath) extends SchemaPath 
   override def asString: Seq[String] = left.asString ++ right.asString
 }
 case object RootPath extends SchemaPath {
-  override def ++(path: SchemaPath) : SchemaPath = path
+  override def /(path: SchemaPath) : SchemaPath = path
 
   override def asString: Seq[String] = Seq()
 }
