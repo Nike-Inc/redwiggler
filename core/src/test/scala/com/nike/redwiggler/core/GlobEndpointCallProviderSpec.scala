@@ -22,7 +22,7 @@ class GlobEndpointCallProviderSpec extends fixture.FunSpec with Matchers {
         |}
       """.stripMargin)
 
-    val glob = new GlobEndpointCallProvider(fixture.dir, ".*.json")
+    val glob = GlobEndpointCallProvider(fixture.dir, ".*.json")
     val calls = glob.getCalls.asScala
     calls should contain only EndpointCall(
         verb = HttpVerb.GET,
@@ -32,6 +32,14 @@ class GlobEndpointCallProviderSpec extends fixture.FunSpec with Matchers {
         requestBody = None,
         code = 200
       )
+  }
+
+  it("should fail if directory does not exist") { fixture =>
+    fixture.dir.delete()
+    val glob = GlobEndpointCallProvider(fixture.dir, ".*.json")
+    intercept[GlobDirectoryDoesNotExist] {
+      glob.getCalls
+    }
   }
 
   override protected def withFixture(test: OneArgTest): Outcome = withFixture(test.toNoArgTest(new FixtureParam))
