@@ -16,7 +16,14 @@
         @for(r <- result) {
             <li>
                 @r match {
-                    case svf : SchemaValidationFailed => {@renderSchemaValidationFailed(svf)}
+                    case failed : SchemaValidationFailed => {
+                        Failed Schema Validation: @{failed.validationFailure.message}
+                        <ul>
+                        @for(cause <- failed.validationFailure.path) {
+                            <li>@{cause.message}</li>
+                        }
+                        </ul>
+                    }
                     case ValidationPassed(_, _) => {Passed}
                     case CallNotMatchedBySpecification(call) => {Not Matched}
                     case CallMatchedMultipleSpecifications(_, _) => {Call matched multiple specifications}

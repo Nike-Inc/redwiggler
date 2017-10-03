@@ -1,9 +1,0 @@
-@import com.nike.redwiggler.core.models.SchemaValidationFailed
-
-@(failed : SchemaValidationFailed)
-Failed Schema Validation: @{failed.validationFailure.message}
-<ul>
-@for(cause <- failed.validationFailure.path) {
-    <li>@{cause.message}</li>
-}
-</ul>

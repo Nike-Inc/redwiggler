@@ -53,7 +53,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
     case refProperty: RefProperty =>
       val ref = refProperty.getSimpleRef
       val model = swagger.getDefinitions.get(ref)
-      resolveSchemaModel(path ++ schemaProperty)(model)
+      resolveSchemaModel(path / schemaProperty)(model)
     case enumProperty: StringProperty if enumProperty.getEnum != null =>
       EnumSchema.builder
         .possibleValues(enumProperty.getEnum.asScala.toSet.asInstanceOf[Set[Object]].asJava)
@@ -73,7 +73,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       ArraySchema.builder
         .maxItems(arrayProperty.getMaxItems)
         .minItems(arrayProperty.getMinItems)
-        .addItemSchema(resolveSchema(path ++ arrayProperty)(arrayProperty.getItems))
+        .addItemSchema(resolveSchema(path / arrayProperty)(arrayProperty.getItems))
         .title(arrayProperty.getTitle)
         .description(arrayProperty.getDescription)
         .build
@@ -99,7 +99,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       val objectSchema = ObjectSchema.builder
       for {
         (propertyName, property) <- objectProperty.getProperties.asScala
-        propertySchema = resolveSchema(path ++ objectProperty)(property)
+        propertySchema = resolveSchema(path / objectProperty)(property)
       } {
         objectSchema.addPropertySchema(propertyName, propertySchema)
       }
@@ -118,16 +118,16 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       throw SchemaNotFoundException(path)
     case arrayModel : ArrayModel =>
       ArraySchema.builder()
-        .addItemSchema(resolveSchema(path ++ arrayModel)(arrayModel.getItems))
+        .addItemSchema(resolveSchema(path / arrayModel)(arrayModel.getItems))
       .build()
     case refModel: RefModel =>
       val ref = refModel.getSimpleRef
       val resolvedModel = swagger.getDefinitions.get(ref)
-      resolveSchemaModel(path ++ refModel)(resolvedModel)
+      resolveSchemaModel(path / refModel)(resolvedModel)
     case composedModel: ComposedModel =>
       CombinedSchema.builder
-        .subschema(resolveSchemaModel(path ++ composedModel)(composedModel.getChild))
-        .subschemas(composedModel.getAllOf.asScala.map(resolveSchemaModel(path ++ composedModel)).asJava)
+        .subschema(resolveSchemaModel(path / composedModel)(composedModel.getChild))
+        .subschemas(composedModel.getAllOf.asScala.map(resolveSchemaModel(path / composedModel)).asJava)
         .criterion(CombinedSchema.ALL_CRITERION)
         .build
     case modelImpl: ModelImpl if modelImpl.getProperties == null && "string" == modelImpl.getType =>
@@ -139,7 +139,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       for {
         (propertyName, property) <- Option(modelImpl.getProperties).map(_.asScala).getOrElse(Seq())
       } {
-        objectSchema.addPropertySchema(propertyName, resolveSchema(path ++ propertyName)(property))
+        objectSchema.addPropertySchema(propertyName, resolveSchema(path / propertyName)(property))
       }
       Option(modelImpl.getRequired).map(_.asScala).toSeq.flatten.foreach(objectSchema.addRequiredProperty)
       objectSchema
