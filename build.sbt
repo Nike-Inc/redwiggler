@@ -53,6 +53,7 @@ lazy val blueprint = (project in file("blueprint"))
   .settings(ReadmeTests.projectSettings)
   .settings(
     name := "redwiggler-blueprint",
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", new File(target.value, "/test-reports-html").getAbsolutePath),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.0.1" % "test"
     )
