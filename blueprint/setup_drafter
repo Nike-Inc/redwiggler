@@ -1,0 +1,7 @@
+#!/bin/sh
+
+git clone --branch v3.2.2 --recursive git://github.com/apiaryio/drafter.git
+cd drafter
+./configure
+make test
+make drafter

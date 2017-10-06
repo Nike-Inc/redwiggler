@@ -1,0 +1,7 @@
+{
+  "verb": "GET",
+  "path": "/my/resource/v2/53b78f35-2fbb-4207-9777-1b9aa1a05327",
+  "responseHeaders": [],
+  "responseBody": "{\"id\": \"53b78f35-2fbb-4207-9777-1b9aa1a05327\", \"name\": \"foo\"}",
+  "code": 200
+}

@@ -44,6 +44,19 @@ lazy val swagger = (project in file("swagger"))
     )
   )
 
+lazy val blueprint = (project in file("blueprint"))
+  .dependsOn(core)
+  .dependsOn(html % "compile->test")
+  .enablePlugins(ReadmeTests)
+  .settings(ReadmeTests.projectSettings)
+  .settings(
+    name := "redwiggler-blueprint",
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", new File(target.value, "/test-reports-html").getAbsolutePath),
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    )
+  )
+
 lazy val restassured = (project in file("restassured"))
   .dependsOn(core)
   .settings(
@@ -64,10 +77,10 @@ lazy val html = (project in file("html"))
   )
 
 lazy val root = (project in file("."))
+  .aggregate(core, swagger, restassured, html, blueprint)
   .enablePlugins(ReadmeTests)
   .settings(ReadmeTests.projectSettings)
-  .aggregate(core, swagger, restassured, html)
-  .dependsOn(core, swagger, html)
+  .dependsOn(core, swagger, html, blueprint)
   .settings(
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", new File(target.value, "/test-reports-html").getAbsolutePath)
   )

@@ -1,0 +1,6 @@
+{
+  "verb": "GET",
+  "path": "/foobar",
+  "responseHeaders": [],
+  "code": 200
+}

@@ -12,6 +12,7 @@ RedWiggler has 3 main components:
 1. EndpointSpecifications: defines the endpoint contract. Defined from the API documentation
 
     * Swagger Support: [ ![Download](https://api.bintray.com/packages/nike/maven/redwiggler-swagger/images/download.svg) ](https://bintray.com/nike/maven/redwiggler-swagger/_latestVersion)
+    * [Blueprint Support](blueprint/README.md): [ ![Download](https://api.bintray.com/packages/nike/maven/redwiggler-blueprint/images/download.svg) ](https://bintray.com/nike/maven/redwiggler-blueprint/_latestVersion)
   
 2. EndpointCall: An instance of a request/response to the service to be matched against the EndpointSpecification
 3. ReportProcessor: Takes the result of the analysis and generates output (such as an html page)
