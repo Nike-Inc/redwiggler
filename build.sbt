@@ -14,8 +14,6 @@ libraryDependencies in ThisBuild ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 )
 
-coverallsServiceName := Some("travis-pro")
-
 licenses in ThisBuild := Seq(
   "BSD" -> new java.net.URL("https://opensource.org/licenses/BSD-3-Clause")
 )
