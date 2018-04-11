@@ -1,3 +1,5 @@
+enablePlugins(GitVersioning)
+
 scalaVersion in ThisBuild := "2.12.3"
 crossScalaVersions := Seq("2.12.3", "2.11.11", "2.10.5")
 
@@ -21,7 +23,7 @@ licenses in ThisBuild := Seq(
 coverageMinimum in ThisBuild := 80
 coverageFailOnMinimum in ThisBuild := true
 
-releaseCrossBuild in ThisBuild := true
+git.useGitDescribe := true
 
 lazy val core = (project in file("core"))
   .settings(
