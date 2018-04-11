@@ -181,4 +181,4 @@ object SwaggerEndpointSpecificationProvider {
   }
 }
 
-case class SchemaNotFoundException(path : SchemaPath) extends IllegalStateException
+case class SchemaNotFoundException(path : SchemaPath) extends IllegalStateException(s"Schema not found: ${path.asString.mkString(",")}")
