@@ -4,5 +4,6 @@ scala:
 
 script:
   - echo "hello"
-after_success:
-  - "sbt clean +publish"
+deploy:
+  - provider: script
+    script: "sbt clean +publish"
