@@ -25,14 +25,14 @@ case class ModelPath(model : Model) extends SchemaPath {
     case arrayModel : ArrayModel => "array"
     case refModel : RefModel => refModel.getSimpleRef
     case composed : ComposedModel => "Composed"
-    case _ => model.getClass.getName + " - " + model.getReference + " - " + model.getTitle
+    case _ => model.getTitle
   })
 }
 case class PropertyPath(property: Property) extends SchemaPath {
   override def asString: Seq[String] = Seq(property match {
     case refProperty : RefProperty => refProperty.getSimpleRef
     case arrayProperty : ArrayProperty => "array"
-    case _ => property.getType + " - " + property.getName
+    case _ => property.getTitle
   })
 }
 case class ComposedPath(left: SchemaPath, right: SchemaPath) extends SchemaPath {
