@@ -282,6 +282,32 @@ class SwaggerEndpointSpecificationProviderSpec extends FunSpec with Matchers {
     endpoints should equal(Seq(endpointSpecification))
   }
 
+  it("parses allOf types with no properties") {
+    val endpoints = loadEndpoints(getClass.getResourceAsStream("allOf_parsing_no_properties.swagger.yaml"))
+
+    val schema = CombinedSchema.builder()
+      .criterion(CombinedSchema.ALL_CRITERION)
+      .subschemas(Seq[Schema](
+        ObjectSchema.builder()
+          .addPropertySchema("baz", StringSchema.builder().build())
+          .build(),
+        ObjectSchema.builder()
+          .addPropertySchema("bar", StringSchema.builder().build())
+          .build()
+      ).asJava)
+      .build()
+
+    val endpointSpecification = EndpointSpecification(
+      verb = GET,
+      path = Path(),
+      code = 200,
+      responseSchema = Some(JsonSchema(schema)),
+      requestSchema = None
+    )
+
+    endpoints should equal(Seq(endpointSpecification))
+  }
+
   it("byteInputOperation") {
     val endpoints = loadEndpoints(getClass.getResourceAsStream("byteInputOperation.yaml"))
 
