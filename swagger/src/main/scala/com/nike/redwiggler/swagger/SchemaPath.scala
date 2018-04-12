@@ -1,6 +1,6 @@
 package com.nike.redwiggler.swagger
 
-import io.swagger.models.{ArrayModel, Model}
+import io.swagger.models.{ArrayModel, ComposedModel, Model, RefModel}
 import io.swagger.models.properties.{ArrayProperty, Property, RefProperty}
 
 sealed trait SchemaPath {
@@ -23,6 +23,8 @@ case class StringPath(name : String) extends SchemaPath {
 case class ModelPath(model : Model) extends SchemaPath {
   override def asString: Seq[String] = Seq(model match {
     case arrayModel : ArrayModel => "array"
+    case refModel : RefModel => refModel.getSimpleRef
+    case composed : ComposedModel => "Composed"
     case _ => model.getTitle
   })
 }

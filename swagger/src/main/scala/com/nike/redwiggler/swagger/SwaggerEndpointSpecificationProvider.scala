@@ -34,7 +34,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
 
   private lazy val basePath = if (StringUtils.isEmpty(swagger.getBasePath)) RedwigglerPath(Seq()) else RedwigglerPath(swagger.getBasePath)
 
-  lazy val definitions : Map[String, Schema] = for {
+  lazy val definitions: Map[String, Schema] = for {
     (name, schemaModel) <- Option(swagger.getDefinitions).map(_.asScala).toSeq.flatten.toMap
   } yield {
     name -> resolveSchemaModel(RootPath)(schemaModel)
@@ -49,7 +49,7 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
       case bodyParameter: BodyParameter => resolveSchemaModel(RootPath)(bodyParameter.getSchema)
     }.headOption
 
-  private def resolveSchema(path : SchemaPath)(schemaProperty: Property): Schema = schemaProperty match {
+  private def resolveSchema(path: SchemaPath)(schemaProperty: Property): Schema = schemaProperty match {
     case refProperty: RefProperty =>
       val ref = refProperty.getSimpleRef
       val model = swagger.getDefinitions.get(ref)
@@ -116,17 +116,20 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
   private def resolveSchemaModel(path: SchemaPath)(model: Model): Schema = model match {
     case null =>
       throw SchemaNotFoundException(path)
-    case arrayModel : ArrayModel =>
+    case arrayModel: ArrayModel =>
       ArraySchema.builder()
         .addItemSchema(resolveSchema(path / arrayModel)(arrayModel.getItems))
-      .build()
+        .build()
     case refModel: RefModel =>
       val ref = refModel.getSimpleRef
       val resolvedModel = swagger.getDefinitions.get(ref)
       resolveSchemaModel(path / refModel)(resolvedModel)
     case composedModel: ComposedModel =>
-      CombinedSchema.builder
-        .subschema(resolveSchemaModel(path / composedModel)(composedModel.getChild))
+      val builder = CombinedSchema.builder
+      if (composedModel.getChild != null) {
+        builder.subschema(resolveSchemaModel(path / composedModel)(composedModel.getChild))
+      }
+      builder
         .subschemas(composedModel.getAllOf.asScala.map(resolveSchemaModel(path / composedModel)).asJava)
         .criterion(CombinedSchema.ALL_CRITERION)
         .build
@@ -158,27 +161,30 @@ case class SwaggerEndpointSpecificationProvider(swagger: Swagger) extends Endpoi
 }
 
 object SwaggerEndpointSpecificationProvider {
-  import io.swagger.parser.SwaggerParser
+
   import java.io._
+
+  import io.swagger.parser.SwaggerParser
+
   import scala.io._
 
-  def apply(file : File) : SwaggerEndpointSpecificationProvider = {
+  def apply(file: File): SwaggerEndpointSpecificationProvider = {
     val swaggerParser = new SwaggerParser()
     val swagger = swaggerParser.parse(Source.fromFile(file).mkString)
     SwaggerEndpointSpecificationProvider(swagger)
   }
 
-  def apply(is: InputStream) : SwaggerEndpointSpecificationProvider = {
+  def apply(is: InputStream): SwaggerEndpointSpecificationProvider = {
     val swaggerParser = new SwaggerParser()
     val swagger = swaggerParser.parse(Source.fromInputStream(is).mkString)
     SwaggerEndpointSpecificationProvider(swagger)
   }
 
-  def apply(s : String) : SwaggerEndpointSpecificationProvider = {
+  def apply(s: String): SwaggerEndpointSpecificationProvider = {
     val swaggerParser = new SwaggerParser()
     val swagger = swaggerParser.parse(s)
     SwaggerEndpointSpecificationProvider(swagger)
   }
 }
 
-case class SchemaNotFoundException(path : SchemaPath) extends IllegalStateException(s"Schema not found: ${path.asString.mkString(",")}")
+case class SchemaNotFoundException(path: SchemaPath) extends IllegalStateException(s"Schema not found: ${path.asString.mkString(",")}")
